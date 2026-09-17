@@ -42,6 +42,17 @@ export interface ScenarioState {
   overdueDays?: number;
   notDueIsbn?: string;
   dueTodayIsbn?: string;
+  // AISDLC-2: overdue-fine lifecycle state (API-level, no UI for this story)
+  fineLoanId?: number;
+  fineIsbn?: string;
+  fineMemberEmail?: string;
+  fineDaysOverdue?: number;
+  fineOriginalAmount?: number;
+  lastResponseStatus?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  lastResponseBody?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  lastOverdueList?: any[];
 }
 
 interface LibraryBddFixtures {

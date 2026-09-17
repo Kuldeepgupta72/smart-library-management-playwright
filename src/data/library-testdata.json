@@ -41,5 +41,12 @@
     "dueTodayBookAuthor": "DueToday Author",
     "dueTodayMemberName": "KAN7 DueToday Member",
     "emptyStateMessage": "No overdue loans right now."
+  },
+  "aisdlc2Fines": {
+    "flatRatePerDay": 0.5,
+    "overdueBookTitle": "AISDLC2 Fine Book",
+    "overdueBookAuthor": "Fine Author",
+    "overdueMemberName": "AISDLC2 Fine Member",
+    "nonExistentLoanId": 999999999
   }
 }
