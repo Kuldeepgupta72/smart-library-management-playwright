@@ -1,0 +1,41 @@
+{
+  "name": "smart-library-management-playwright",
+  "version": "1.0.0",
+  "description": "Playwright + TypeScript automation framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:dev": "cross-env ENV=dev npx playwright test",
+    "test:qa": "cross-env ENV=qa npx playwright test",
+    "test:staging": "cross-env ENV=staging npx playwright test",
+    "test:ui": "npx playwright test tests/ui",
+    "test:api": "npx playwright test tests/api",
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug",
+    "bddgen": "npx bddgen",
+    "test:library-bdd": "npx bddgen && npx playwright test --project=library-bdd",
+    "report": "npx playwright show-report reports/html-report",
+    "codegen": "npx playwright codegen https://automationexercise.com",
+    "install:browsers": "npx playwright install",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "playwright",
+    "typescript",
+    "automation",
+    "mcp",
+    "rag",
+    "sdet"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^22.7.5",
+    "cross-env": "^10.1.0",
+    "dotenv": "^16.4.5",
+    "playwright-bdd": "^9.2.0",
+    "typescript": "^5.6.3"
+  }
+}

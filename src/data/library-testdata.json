@@ -1,0 +1,45 @@
+{
+  "validBook": {
+    "title": "The Pragmatic Programmer",
+    "author": "David Thomas",
+    "isbn": "9780135957059"
+  },
+  "duplicateIsbnBook": {
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "isbn": "9780132350884"
+  },
+  "validMember": {
+    "name": "Jane Doe",
+    "email": "jane.doe@example.com"
+  },
+  "invalidEmails": [
+    { "case": "missing @", "email": "jane.doe.example.com", "expectedError": "Invalid email format." },
+    { "case": "missing domain", "email": "jane.doe@", "expectedError": "Invalid email format." },
+    { "case": "empty string", "email": "", "expectedError": "Name and email are required" }
+  ],
+  "kan18FilterSort": {
+    "availableBookTitle": "KAN18 Available Book",
+    "availableBookAuthor": "Amara Filter",
+    "issuedBookTitle": "KAN18 Issued Book",
+    "issuedBookAuthor": "Zane Filter",
+    "issueMemberName": "KAN18 Filter Member",
+    "sortBookATitle": "AAA KAN18 Sort Book",
+    "sortBookAAuthor": "Zed Sorter",
+    "sortBookZTitle": "ZZZ KAN18 Sort Book",
+    "sortBookZAuthor": "amy sorter",
+    "paginationBookTitlePrefix": "KAN18 Pagination Book"
+  },
+  "kan7Overdue": {
+    "overdueBookTitle": "KAN7 Overdue Book",
+    "overdueBookAuthor": "Overdue Author",
+    "overdueMemberName": "KAN7 Overdue Member",
+    "notDueBookTitle": "KAN7 NotDue Book",
+    "notDueBookAuthor": "NotDue Author",
+    "notDueMemberName": "KAN7 NotDue Member",
+    "dueTodayBookTitle": "KAN7 DueToday Book",
+    "dueTodayBookAuthor": "DueToday Author",
+    "dueTodayMemberName": "KAN7 DueToday Member",
+    "emptyStateMessage": "No overdue loans right now."
+  }
+}
