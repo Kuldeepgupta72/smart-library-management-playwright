@@ -34,6 +34,19 @@ import fs from 'fs';
 export class LoanSeeder {
   private readonly db: DatabaseSync;
   private readonly seededLoanIds: number[] = [];
+  // AISDLC-3 follow-up: GET /api/members and GET /api/books are now
+  // paginated (default pageSize 20, hard cap 100 — see
+  // src/utils/pagination.ts in the app repo). Every AISDLC-2 scenario
+  // creates one member + one book via seedActiveLoan() and never
+  // deleted them, so the shared dev database accumulated rows across
+  // runs until it crept past the cap and newly-created rows (id ASC,
+  // oldest-first — unchanged sort order) fell off the default page,
+  // making Playwright's #members-list/#books-list assertions fail
+  // intermittently once total members/books exceeded 100. Track what
+  // this seeder created so cleanup() can delete it, keeping the
+  // shared database's row counts bounded run over run.
+  private readonly seededMemberEmails: string[] = [];
+  private readonly seededBookIsbns: string[] = [];
 
   constructor(dbPath: string = LoanSeeder.resolveDbPath()) {
     if (!fs.existsSync(dbPath)) {
@@ -82,6 +95,8 @@ export class LoanSeeder {
       .run(issuedDate, dueDate, loan.id);
 
     this.seededLoanIds.push(loan.id);
+    this.seededMemberEmails.push(memberEmail);
+    this.seededBookIsbns.push(isbn);
     return loan.id;
   }
 
@@ -110,13 +125,29 @@ export class LoanSeeder {
 
   /**
    * Marks every loan this instance backdated as returned, restoring the
-   * shared dev database to a non-overdue state after the test finishes.
+   * shared dev database to a non-overdue state after the test finishes,
+   * then deletes the loan/member/book rows this seeder created so the
+   * shared dev database's row counts don't grow unbounded across runs
+   * (see the class-level comment on seededMemberEmails/seededBookIsbns
+   * for why this matters once GET /api/members and GET /api/books are
+   * paginated with a hard cap).
    */
   cleanup(): void {
     for (const id of this.seededLoanIds) {
       this.db.prepare("UPDATE loans SET returned_date = date('now') WHERE id = ? AND returned_date IS NULL").run(id);
     }
+    for (const id of this.seededLoanIds) {
+      this.db.prepare('DELETE FROM loans WHERE id = ?').run(id);
+    }
+    for (const email of this.seededMemberEmails) {
+      this.db.prepare('DELETE FROM members WHERE email = ?').run(email);
+    }
+    for (const isbn of this.seededBookIsbns) {
+      this.db.prepare('DELETE FROM books WHERE isbn = ?').run(isbn);
+    }
     this.seededLoanIds.length = 0;
+    this.seededMemberEmails.length = 0;
+    this.seededBookIsbns.length = 0;
   }
 
   close(): void {

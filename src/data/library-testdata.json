@@ -48,5 +48,9 @@
     "overdueBookAuthor": "Fine Author",
     "overdueMemberName": "AISDLC2 Fine Member",
     "nonExistentLoanId": 999999999
+  },
+  "aisdlc3Pagination": {
+    "memberNamePrefix": "AISDLC3 Pagination Member",
+    "newMemberNamePrefix": "AISDLC3 New Member"
   }
 }
