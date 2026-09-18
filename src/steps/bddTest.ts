@@ -53,6 +53,18 @@ export interface ScenarioState {
   lastResponseBody?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   lastOverdueList?: any[];
+  // AISDLC-3: members pagination state (API-level, no UI for this story)
+  pagMemberId?: number;
+  pagMemberName?: string;
+  pagMemberEmail?: string;
+  pagRequestedPageSize?: number;
+  pagExpectedPage?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  lastMembersResponse?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  lastSearchResponse?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  lastBooksResponse?: any;
 }
 
 interface LibraryBddFixtures {
