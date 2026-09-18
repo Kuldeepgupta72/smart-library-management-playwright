@@ -56,6 +56,14 @@ export class LoanSeeder {
       );
     }
     this.db = new DatabaseSync(dbPath);
+    // AISDLC-2 follow-up: fullyParallel test workers each open their own
+    // connection to the same shared library.db. Without a busy timeout,
+    // SQLite throws "database is locked" immediately whenever this
+    // connection's write collides with a concurrent write from another
+    // worker or the app server, instead of waiting briefly for the other
+    // writer to finish. 5s is far longer than any single statement here
+    // should ever take, so this only adds latency on genuine contention.
+    this.db.exec('PRAGMA busy_timeout = 5000');
   }
 
   private static resolveDbPath(): string {
@@ -124,26 +132,33 @@ export class LoanSeeder {
   }
 
   /**
-   * Marks every loan this instance backdated as returned, restoring the
-   * shared dev database to a non-overdue state after the test finishes,
-   * then deletes the loan/member/book rows this seeder created so the
-   * shared dev database's row counts don't grow unbounded across runs
-   * (see the class-level comment on seededMemberEmails/seededBookIsbns
-   * for why this matters once GET /api/members and GET /api/books are
-   * paginated with a hard cap).
+   * Deletes the loan/member/book rows this instance created (loan
+   * first, since it references the member/book), restoring the shared
+   * dev database to a non-overdue state after the test finishes and
+   * keeping row counts bounded across runs (see the class-level comment
+   * on seededMemberEmails/seededBookIsbns for why this matters once
+   * GET /api/members and GET /api/books are paginated with a hard cap).
    */
   cleanup(): void {
-    for (const id of this.seededLoanIds) {
-      this.db.prepare("UPDATE loans SET returned_date = date('now') WHERE id = ? AND returned_date IS NULL").run(id);
-    }
-    for (const id of this.seededLoanIds) {
-      this.db.prepare('DELETE FROM loans WHERE id = ?').run(id);
-    }
-    for (const email of this.seededMemberEmails) {
-      this.db.prepare('DELETE FROM members WHERE email = ?').run(email);
-    }
-    for (const isbn of this.seededBookIsbns) {
-      this.db.prepare('DELETE FROM books WHERE isbn = ?').run(isbn);
+    // Delete (not just mark returned) the loan/member/book rows this
+    // instance seeded, in a single transaction so the write lock is
+    // held only once per test instead of once per DELETE statement —
+    // shrinking the contention window under fullyParallel workers.
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      for (const id of this.seededLoanIds) {
+        this.db.prepare('DELETE FROM loans WHERE id = ?').run(id);
+      }
+      for (const email of this.seededMemberEmails) {
+        this.db.prepare('DELETE FROM members WHERE email = ?').run(email);
+      }
+      for (const isbn of this.seededBookIsbns) {
+        this.db.prepare('DELETE FROM books WHERE isbn = ?').run(isbn);
+      }
+      this.db.exec('COMMIT');
+    } catch (err) {
+      this.db.exec('ROLLBACK');
+      throw err;
     }
     this.seededLoanIds.length = 0;
     this.seededMemberEmails.length = 0;
