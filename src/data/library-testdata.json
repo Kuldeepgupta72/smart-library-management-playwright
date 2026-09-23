@@ -52,5 +52,12 @@
   "aisdlc3Pagination": {
     "memberNamePrefix": "AISDLC3 Pagination Member",
     "newMemberNamePrefix": "AISDLC3 New Member"
+  },
+  "aisdlc4EmailUniqueness": {
+    "knownMemberNamePrefix": "AISDLC4 Known Member",
+    "regressionBookTitle": "AISDLC4 Regression Book",
+    "regressionBookAuthor": "Regression Author",
+    "regressionBookIsbn": "9780000004004",
+    "regressionMemberNamePrefix": "AISDLC4 Regression Member"
   }
 }
