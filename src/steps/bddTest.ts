@@ -65,6 +65,15 @@ export interface ScenarioState {
   lastSearchResponse?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   lastBooksResponse?: any;
+  // AISDLC-4: email-uniqueness state (API-level, no UI for this story)
+  knownMemberName?: string;
+  knownMemberEmail?: string;
+  regressionBookId?: number;
+  regressionBookIsbn?: string;
+  regressionMemberId?: number;
+  regressionMemberEmail?: string;
+  regressionLoanId?: number;
+  lastIssueDueDate?: string;
 }
 
 interface LibraryBddFixtures {
